@@ -14,23 +14,29 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
     var mask: CALayer?
-    var imageView: UIImageView?
+    var animationView: UIView?
+    
+//    var imageView: UIImageView?
 
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         
         self.window = UIWindow(frame: UIScreen.mainScreen().bounds)
         
-        let imageView = UIImageView(frame: self.window!.frame)
-        imageView.image = UIImage(named: "twitter")
-        self.window!.addSubview(imageView)
+        let backgroundView = UIView(frame: self.window!.frame)
+        backgroundView.backgroundColor = UIColor.blackColor()
+        self.window!.addSubview(backgroundView)
+        
+        let animationView = UIView(frame: backgroundView.frame)
+        animationView.backgroundColor = UIColor.redColor()
+        backgroundView.addSubview(animationView)
         
         self.mask = CALayer()
         self.mask!.contents = UIImage(named: "twitter logo mask")!.CGImage
         self.mask!.bounds = CGRect(x: 0, y: 0, width: 100, height: 100)
         self.mask!.anchorPoint = CGPoint(x: 0.5, y: 0.5)
-        self.mask!.position = CGPoint(x: imageView.frame.size.width / 2, y: imageView.frame.size.height / 2)
-        imageView.layer.mask = mask
-        self.imageView = imageView
+        self.mask!.position = CGPoint(x: animationView.frame.size.width / 2, y: animationView.frame.size.height / 2)
+        animationView.layer.mask = mask
+        self.animationView = animationView
         
         animateMask()
         
@@ -82,10 +88,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         keyFrameAnimation.keyTimes = [0, 0.3, 1]
         keyFrameAnimation.timingFunctions = [CAMediaTimingFunction(name:kCAMediaTimingFunctionEaseOut), CAMediaTimingFunction(name:kCAMediaTimingFunctionEaseOut)]
         self.mask!.addAnimation(keyFrameAnimation, forKey: "bounds")
+
     }
     
     override func animationDidStop(anim: CAAnimation, finished flag: Bool) {
-        self.imageView!.layer.mask = nil // remove mask
+//        self.animationView!.layer.mask = nil // remove mask
+//        self.animationView?.removeFromSuperview()
+        
+        UIView.animateWithDuration(1, animations: { 
+            self.animationView!.alpha = 0.0
+            }) { (true) in
+                self.animationView!.layer.mask = nil // remove mask
+                self.animationView?.removeFromSuperview()
+        }
     }
 
 }
